@@ -1,0 +1,52 @@
+# Node.js dependencies
+node_modules/
+npm-debug.log*
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+config/.env  # 👈 यहाँ जोड़ा गया
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build files
+build/
+dist/
+.cache/
+out/
+.next/
+
+# Database files
+*.sqlite
+*.sqlite3
+dump.rdb
+mongod.lock
+mongodb/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Editor-specific files
+.vscode/
+.idea/
+*.swp
+
+# TypeScript specific
+*.tsbuildinfo
+
+# Miscellaneous
+coverage/
+.nyc_output/
