@@ -1,57 +1,38 @@
-const express = require('express');
-const ErrorHandler = require('./utils/ErrorHandler');
-const app = express();
+const express = require("express");
+const ErrorHandler = require("./utils/ErrorHandler");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
-const cors = require('cors');
+const cors = require("cors");
+
+const app = express();
+
+// ✅ CORS Configuration (Ensure frontend can access backend)
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
-
-
-
-
-
-app.use(express.json());
+// ✅ Middleware Setup
+app.use(express.json({ limit: "100mb" })); // Unified JSON body parsing
+app.use(express.urlencoded({ extended: true, limit: "100mb" }));
 app.use(cookieParser());
-app.use('/', express.static('uploads'));
-app.use("/test", (req, res) => {
+app.use(bodyParser.json());
+
+// ✅ Serve static files from 'uploads' directory
+app.use("/uploads", express.static("uploads"));
+
+// ✅ Test Route (For debugging)
+app.get("/test", (req, res) => {
   res.send("Hello world!");
 });
 
-
-
-
-app.use(express.json({ limit: "100mb" }));
-app.use(express.urlencoded({ extended: true, limit: "100mb" }));
-
-
-//config
+// ✅ Load environment variables (only in development mode)
 if (process.env.NODE_ENV !== "PRODUCTION") {
-    require("dotenv").config({
-      path: "config/.env",
-    });
-  }
+  require("dotenv").config({ path: "config/.env" });
+}
 
+// ✅ Import and use routes
+const userRoutes = require("./controller/user");
+app.use("/api/v2/user", userRoutes);
 
-
-
-
-// import routes
-const user = require("./controller/user");
-
-
-app.use("/api/v2/user", user);
-
-
-
-
-
-
-
-
-
-
-// it's for ErrorHandling
+// ✅ Error Handling Middleware
 app.use(ErrorHandler);
 
 module.exports = app;
