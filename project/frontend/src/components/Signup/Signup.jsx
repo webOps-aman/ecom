@@ -1,7 +1,7 @@
 import { React, useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import styles from "../../styles/styles";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { RxAvatar } from "react-icons/rx";
 import axios from "axios";
 // import {server} from '../../server.js';
@@ -14,7 +14,7 @@ const Singup = () => {
   const [visible, setVisible] = useState(false);
   const [avatar, setAvatar] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
 
   const handleFileInputChange = (e) => {
@@ -51,9 +51,14 @@ const Singup = () => {
     })
     .then((res) => {
       toast.success(res.data.message);
-      if(res.data.success === true){
-        navigate("/");
-      }
+      setName("");
+      setEmail("");
+      setPassword("");
+      setAvatar();
+
+
+
+      alert(res.message);
     })
     .catch((error) => {
       toast.error(error.response?.data?.message || "Something went wrong");
