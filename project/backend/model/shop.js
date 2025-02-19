@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
-
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const shopSchema = new mongoose.Schema({
   name: {
@@ -9,6 +10,7 @@ const shopSchema = new mongoose.Schema({
   email: {
     type: String,
     required: [true, "Please enter your shop email address"],
+    unique: true,
   },
   password: {
     type: String,
@@ -19,13 +21,12 @@ const shopSchema = new mongoose.Schema({
   description: {
     type: String,
   },
-
   address: {
     type: String,
     required: true,
   },
   phoneNumber: {
-    type: Number,
+    type: String,
     required: true,
   },
   role: {
@@ -46,14 +47,31 @@ const shopSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-
   createdAt: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
   },
- 
+  resetPasswordToken: String,
+  resetPasswordTime: Date,
 });
 
+// Hash password before saving
+shopSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
 
+// Generate JWT Token
+shopSchema.methods.getJwtToken = function () {
+  return jwt.sign({ id: this._id }, process.env.JWT_SECRET_KEY, {
+    expiresIn: process.env.JWT_EXPIRES || "7d",
+  });
+};
+
+// Compare password
+shopSchema.methods.comparePassword = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
+};
 
 module.exports = mongoose.model("Shop", shopSchema);

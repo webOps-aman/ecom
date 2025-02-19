@@ -3,7 +3,22 @@ import "./App.css";
 import { ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {BrowserRouter, Routes, Route} from "react-router-dom"
-import {LoginPage, SignupPage, ActivationPage, HomePage, ProductsPage, BestSellingPage, EventsPage, FAQPage, ProductDetailsPage, ProfilePage, ShopCreatePage} from "./routes/Routes.js";
+import {
+    LoginPage,
+    SignupPage,
+    ActivationPage,
+    HomePage,
+    ProductsPage,
+    BestSellingPage,
+    EventsPage,
+    FAQPage,
+    ProductDetailsPage,
+    ProfilePage,
+    ShopCreatePage,
+    SellerActivationPage,
+          
+    } from "./routes/Routes.js";
+    
 import Store from "./redux/store.js";
 import { loadUser } from "./redux/actions/user.js";
 import { useSelector } from "react-redux";
@@ -41,6 +56,7 @@ function App() {
           </ProtectedRoute>
         } />
         <Route path="/shop-create" element={<ShopCreatePage/>} />
+        <Route path="/seller/activation/:activation_token" element={<SellerActivationPage/>} />
         
 
       </Routes>

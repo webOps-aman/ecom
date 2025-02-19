@@ -31,7 +31,10 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
 
 // ✅ Import and use routes
 const userRoutes = require("./controller/user");
+const shop = require("./controller/shop");
 app.use("/api/v2/user", userRoutes);
+app.use("/api/v2/shop", shop);
+
 
 // ✅ Error Handling Middleware
 app.use(ErrorHandler);
