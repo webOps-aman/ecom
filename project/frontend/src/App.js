@@ -16,6 +16,7 @@ import {
     ProfilePage,
     ShopCreatePage,
     SellerActivationPage,
+    ShopLoginPage,
           
     } from "./routes/Routes.js";
     
@@ -57,7 +58,7 @@ function App() {
         } />
         <Route path="/shop-create" element={<ShopCreatePage/>} />
         <Route path="/seller/activation/:activation_token" element={<SellerActivationPage/>} />
-        
+        <Route path="/shop-login" element={<ShopLoginPage/>} />
 
       </Routes>
 

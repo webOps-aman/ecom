@@ -19,7 +19,6 @@ const ShopCreate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     const formData = new FormData();
     formData.append("name", name);
     formData.append("email", email);
@@ -29,33 +28,23 @@ const ShopCreate = () => {
     formData.append("phoneNumber", phoneNumber);
     formData.append("file", avatar);
 
-    // ✅ Debugging: Log Form Data before sending
-    console.log("📝 Form Data Submitted:");
-    for (let pair of formData.entries()) {
-        console.log(pair[0], ":", pair[1]);
-    }
-
     try {
-        const res = await axios.post("http://localhost:8000/api/v2/shop/create-shop", formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-        });
-        toast.success(res.data.message);
-
-        // ✅ Reset Form after successful submission
-        setName("");
-        setEmail("");
-        setPassword("");
-        setAvatar(null);
-        setAvatarPreview(null);
-        setZipCode("");
-        setAddress("");
-        setPhoneNumber("");
-
+      const res = await axios.post("http://localhost:8000/api/v2/shop/create-shop", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      toast.success(res.data.message);
+      setName("");
+      setEmail("");
+      setPassword("");
+      setAvatar(null);
+      setAvatarPreview(null);
+      setZipCode("");
+      setAddress("");
+      setPhoneNumber("");
     } catch (error) {
-        toast.error(error.response?.data?.message || "Something went wrong!");
+      toast.error(error.response?.data?.message || "Something went wrong!");
     }
-};
-
+  };
 
   const handleFileInputChange = (e) => {
     const file = e.target.files[0];
@@ -89,7 +78,7 @@ const ShopCreate = () => {
               <label className="block text-sm font-medium text-gray-700">Phone Number</label>
               <input
                 type="number"
-                name="phone-number"
+                name="phoneNumber"
                 required
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
