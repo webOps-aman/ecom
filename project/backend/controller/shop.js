@@ -165,14 +165,18 @@ router.post("/login-shop", catchAsyncErrors(async (req, res, next) => {
     }
 }));
 
+
 // ✅ Load Shop Route
 router.get("/getSeller", isSeller, catchAsyncErrors(async (req, res, next) => {
     try {
-        console.log(req.seller);
+        if (!req.seller) {
+            return next(new ErrorHandler("Unauthorized access! No seller found in request.", 401));
+        }
+
         const seller = await Shop.findById(req.seller._id);
 
         if (!seller) {
-            return next(new ErrorHandler("Seller doesn't exist", 400));
+            return next(new ErrorHandler("Seller doesn't exist", 404));
         }
 
         res.status(200).json({
@@ -180,8 +184,9 @@ router.get("/getSeller", isSeller, catchAsyncErrors(async (req, res, next) => {
             seller,
         });
     } catch (error) {
-        return next(new ErrorHandler(error.message, 500));
+        return next(new ErrorHandler(error.message || "Internal Server Error", 500));
     }
 }));
+
 
 module.exports = router;

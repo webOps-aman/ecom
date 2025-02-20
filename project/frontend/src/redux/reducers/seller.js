@@ -2,6 +2,9 @@ import { createReducer } from "@reduxjs/toolkit";
 
 const initialState = {
   isLoading: true,
+  isSeller: false, // ✅ Default value added
+  seller: null,
+  error: null,
 };
 
 export const sellerReducer = createReducer(initialState, (builder) => {
@@ -18,9 +21,10 @@ export const sellerReducer = createReducer(initialState, (builder) => {
       state.isLoading = false;
       state.error = action.payload;
       state.isSeller = false;
+      state.seller = null;
     })
 
-    // Get all sellers --- Admin
+    // ✅ Get all sellers --- Admin
     .addCase("getAllSellersRequest", (state) => {
       state.isLoading = true;
     })
@@ -28,12 +32,12 @@ export const sellerReducer = createReducer(initialState, (builder) => {
       state.isLoading = false;
       state.sellers = action.payload;
     })
-    .addCase("getAllSellerFailed", (state, action) => {
+    .addCase("getAllSellersFail", (state, action) => { // ✅ Fixed typo
       state.isLoading = false;
       state.error = action.payload;
     })
 
-    // Clear errors
+    // ✅ Clear errors
     .addCase("clearErrors", (state) => {
       state.error = null;
     });

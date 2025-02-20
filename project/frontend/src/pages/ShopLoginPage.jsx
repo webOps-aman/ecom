@@ -8,7 +8,11 @@ const ShopLoginPage = () => {
   const { isSeller, seller } = useSelector((state) => state.seller);
 
   useEffect(() => {
+    console.log("Redux State -> isSeller:", isSeller);
+    console.log("Redux State -> seller:", seller);
+
     if (isSeller && seller?._id) {
+      console.log("Navigating to:", `/shop/${seller._id}`);
       navigate(`/shop/${seller._id}`);
     }
   }, [isSeller, seller, navigate]);
