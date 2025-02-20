@@ -5,14 +5,15 @@ const router = express.Router();
 const Shop = require("../model/shop");
 const fs = require("fs");
 const jwt = require("jsonwebtoken");
-const { isAuthenticated } = require("../middleware/auth");
+const { isAuthenticated, isSeller } = require("../middleware/auth");
 const sendMail = require("../utils/sendMail");
 const sendToken = require("../utils/jwtToken");
 const ErrorHandler = require("../utils/ErrorHandler");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 const multer = require("multer");
+const sendShopToken = require("../utils/shopToken");
 
-// ✅ Uploads Directory Create if Not Exists
+// ✅ Create uploads directory if it doesn't exist
 const uploadDir = "uploads";
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir);
@@ -48,6 +49,7 @@ router.post("/create-shop", upload.single("file"), catchAsyncErrors(async (req, 
         const filename = req.file.filename;
         const fileUrl = `/uploads/${filename}`;
 
+        // ✅ Send plaintext password in token (hashing nahi karna yahan)
         const seller = { name, email, password, avatar: fileUrl, address, phoneNumber, zipCode };
 
         const activationToken = createActivationToken(seller);
@@ -80,7 +82,7 @@ const createActivationToken = (seller) => {
         {
             name: seller.name,
             email: seller.email,
-            password: seller.password,
+            password: seller.password,  // ✅ Plaintext password (hashed nahi)
             avatar: seller.avatar,
             address: seller.address,
             phoneNumber: seller.phoneNumber,
@@ -102,7 +104,6 @@ router.post("/activation", catchAsyncErrors(async (req, res, next) => {
         let newSeller;
         try {
             newSeller = jwt.verify(activation_token, process.env.ACTIVATION_SECRET);
-            console.log("Verified Token Data:", newSeller);
         } catch (error) {
             return next(new ErrorHandler("Your token has expired. Please request a new activation link.", 400));
         }
@@ -119,72 +120,68 @@ router.post("/activation", catchAsyncErrors(async (req, res, next) => {
             return next(new ErrorHandler("Shop already exists", 400));
         }
 
-        console.log("Password Before Hashing:", password);
-
-        // ✅ Securely Hash Password
-        
-
+        // ✅ Password hashing model ke middleware me ho raha hai, yahan nahi karna
         seller = await Shop.create({
             name,
             email,
+            password,  // ✅ Save plaintext password, model middleware handle karega hashing
             avatar: formattedAvatar,
-            password,
             zipCode,
             address,
             phoneNumber,
         });
 
-        console.log("New Seller Created:", seller);
-
-        sendToken(seller, 201, res);
+        sendShopToken(seller, 201, res);
     } catch (error) {
         console.error("Activation Error:", error);
         return next(new ErrorHandler(error.message, 500));
     }
 }));
 
-
-
-// login shop
-router.post(
-    "/login-shop",
-    catchAsyncErrors(async (req, res, next) => {
-      try {
+// ✅ Shop Login Route
+router.post("/login-shop", catchAsyncErrors(async (req, res, next) => {
+    try {
         const { email, password } = req.body;
 
         if (!email || !password) {
-          return next(new ErrorHandler("Please provide all fields!", 400));
+            return next(new ErrorHandler("Please provide all fields!", 400));
         }
 
-        // ✅ Step 1: Check if email exists
-        console.log("Checking user with email:", email);
         const user = await Shop.findOne({ email }).select("+password");
 
         if (!user) {
-          console.log("User not found!");
-          return next(new ErrorHandler("User doesn't exist!", 400));
+            return next(new ErrorHandler("User doesn't exist!", 400));
         }
 
-        // ✅ Step 2: Check password comparison
-        console.log("User found:", user.email);
-        console.log("Entered Password:", password);
-        console.log("Stored Hashed Password:", user.password);
-
-        const isPasswordValid = await user.comparePassword(password);
+        const isPasswordValid = await bcrypt.compare(password, user.password);
 
         if (!isPasswordValid) {
-          console.log("Password mismatch!");
-          return next(new ErrorHandler("Incorrect credentials!", 400));
+            return next(new ErrorHandler("Incorrect credentials!", 400));
         }
 
-        console.log("Login successful!");
-        sendToken(user, 201, res);
-      } catch (error) {
-        console.error("Login Error:", error);
+        sendShopToken(user, 201, res);
+    } catch (error) {
         return next(new ErrorHandler(error.message, 500));
-      }
-    })
-);
+    }
+}));
 
+// ✅ Load Shop Route
+router.get("/getSeller", isSeller, catchAsyncErrors(async (req, res, next) => {
+    try {
+        console.log(req.seller);
+        const seller = await Shop.findById(req.seller._id);
+
+        if (!seller) {
+            return next(new ErrorHandler("Seller doesn't exist", 400));
+        }
+
+        res.status(200).json({
+            success: true,
+            seller,
+        });
+    } catch (error) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+}));
 
 module.exports = router;
