@@ -1,7 +1,7 @@
 import { React,  useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import styles from "../../styles/styles";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 
@@ -11,6 +11,7 @@ const ShopLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [visible, setVisible] = useState(false);
+  const navigate = useNavigate();
   
 
   const handleSubmit = async (e) => {
@@ -27,6 +28,7 @@ const ShopLogin = () => {
       .then((res) => {
         console.log("Response Data:", res.data); // ✅ यहाँ API response चेक करें
         toast.success("Login Success!");
+        navigate("/dashboard");
         window.location.reload(true);
       })
       .catch((err) => {
