@@ -34,10 +34,12 @@ const userRoutes = require("./controller/user");
 const shop = require("./controller/shop");
 const product = require("./controller/product");
 const event = require("./controller/event");
+const coupon = require("./controller/coupounCode");
 app.use("/api/v2/user", userRoutes);
 app.use("/api/v2/shop", shop);
 app.use("/api/v2/product", product);
 app.use("/api/v2/event", event);
+app.use("/api/v2/coupon", coupon);
 
 
 // ✅ Error Handling Middleware
