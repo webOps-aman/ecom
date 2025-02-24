@@ -32,11 +32,9 @@ router.post(
       }
     })
   );
-
-
-
+  
   // get all coupons of a shop
-router.get(
+  router.get(
     "/get-coupon/:id",
     isSeller,
     catchAsyncErrors(async (req, res, next) => {

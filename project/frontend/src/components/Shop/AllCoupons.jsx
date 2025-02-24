@@ -19,7 +19,9 @@ const AllCoupons = () => {
   const [selectedProducts, setSelectedProducts] = useState(null);
   const [value, setValue] = useState(null);
   const { seller } = useSelector((state) => state.seller);
-  const { products } = useSelector((state) => state.products);
+  const { products } = useSelector((state) => state.products) || { products: [] };
+console.log("Redux Products State:", products);
+
 
 
   const dispatch = useDispatch();
@@ -61,7 +63,8 @@ useEffect(() => {
         maxAmount,
         selectedProducts,
         value,
-        shop: seller,
+        // shop: seller,
+        shopId: seller._id,
     },{ withCredentials: true })
     .then((res) => {
         toast.success("Coupon code created successfully!");
@@ -213,21 +216,20 @@ useEffect(() => {
                   <div>
                     <label className="pb-2">Selected Product</label>
                     <select
-  className="w-full mt-2 border h-[35px] rounded-[5px]"
-  value={selectedProducts}
-  onChange={(e) => setSelectedProducts(e.target.value)}
->
-  <option value="">Choose a selected product</option>
-  {products && products.length > 0 ? (
-    products.map((i) => (
-      <option value={i._id} key={i._id}>
-        {i.name}
-      </option>
-    ))
-  ) : (
-    <option disabled>No products available</option>
-  )}
-</select>
+                      className="w-full mt-2 border h-[35px] rounded-[5px]"
+                      value={selectedProducts}
+                      onChange={(e) => setSelectedProducts(e.target.value)}
+                    >
+                      <option value="Choose your selected products">
+                        Choose a selected product
+                      </option>
+                      {products &&
+                        products.map((i) => (
+                          <option value={i.name} key={i.name}>
+                            {i.name}
+                          </option>
+                        ))}
+                    </select>
 
                   </div>
                   <br />
