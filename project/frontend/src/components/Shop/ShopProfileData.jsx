@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from "../../styles/styles";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import ProductCard from "../Route/ProductCard/ProductCard";
 import { productData } from '../../static/data';
-
+import { useDispatch, useSelector } from "react-redux";
+import { getAllProductsShop } from '../../redux/actions/product';
 
 
 
@@ -12,6 +13,14 @@ import { productData } from '../../static/data';
 const ShopProfileData = ({ isOwner }) => {
 
     const [active, setActive] = useState(1);
+    const { products } = useSelector((state) => state.products);
+    const { events } = useSelector((state) => state.events);
+    const { id } = useParams();
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+      dispatch(getAllProductsShop(id));
+    }, [dispatch])
 
 
   return (

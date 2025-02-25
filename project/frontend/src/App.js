@@ -19,7 +19,7 @@ import {
   ShopLoginPage,
 } from "./routes/Routes.js";
 
-import {ShopDashboardPage, ShopCreateProduct, ShopAllProducts, ShopCreateEvents, ShopAllEvents, ShopAllCoupouns} from "./routes/ShopRoutes.js";
+import {ShopDashboardPage, ShopCreateProduct, ShopAllProducts, ShopCreateEvents, ShopAllEvents, ShopAllCoupouns, ShopPreviewPage} from "./routes/ShopRoutes.js";
 import Store from "./redux/store.js";
 import { loadSeller, loadUser } from "./redux/actions/user.js";
 import ProtectedRoute from "./routes/ProtectedRoute.js";
@@ -62,6 +62,7 @@ function App() {
             <Route path="/shop-create" element={<ShopCreatePage />} />
             <Route path="/seller/activation/:activation_token" element={<SellerActivationPage />} />
             <Route path="/shop-login" element={<ShopLoginPage />} />
+            <Route path="/shop/preview/:id" element={<ShopPreviewPage />} />
             <Route path="/shop/:id" element={
               <SellerProtectedRoute>
                   <ShopHomePage/>
